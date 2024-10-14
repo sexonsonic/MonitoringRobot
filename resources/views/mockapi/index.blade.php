@@ -12,14 +12,47 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/responsive.dataTables.min.css">
 
- 
+    <style>
+    .container.mt-5 {
+    padding-top: 70px; /* Adjust based on the actual height of your navbar */
+    margin-top: 2rem; /* Adjust the value for desired spacing */
+}
+    </style>
  
  
 </head>
 <body>
+
+     <!-- NAVBAR-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg fixed-top animate__animated animate__fadeInDown">
+          <div class="container">
+            <a class="navbar-brand" href="#">User Data</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse text-right" id="navbarText">
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link" href="#Layanan">Layanan</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#Tentang">Tentang</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#Staff">Staff</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#Kontak">Kontak Kami</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <!-- END NAVBAR -->
+
     
     <div class="container mt-5">
-        <h2 class="mb-4">User Data</h2>
+      
         <table id="myTable" class="table table-striped">
             <thead>
                 <tr>
