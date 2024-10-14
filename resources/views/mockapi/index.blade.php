@@ -58,10 +58,10 @@
             <tbody>
                 @foreach ($data as $user)
                     <tr>
-                        <td>{{ $user['tipe'] ?? 'N/A' }}</td>
-                        <td>{{ $user['namabot'] ?? 'N/A' }}</td>
-                        <td>{{ $user['chatid'] ?? 'N/A' }}</td>
-                        <td>{{ $user['usage'] ?? 'N/A' }}</td>
+                        <td>{{ $user['tipe'] ?? 'Null' }}</td>
+                        <td>{{ $user['namabot'] ?? 'Null' }}</td>
+                        <td>{{ $user['chatid'] ?? 'Null' }}</td>
+                        <td>{{ $user['usage'] ?? 'Null' }}</td>
                     </tr>
                 @endforeach
             </tbody>
