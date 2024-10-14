@@ -10,49 +10,42 @@
     
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/responsive.dataTables.min.css">
-
-    <style>
-    .container.mt-5 {
-    padding-top: 70px; /* Adjust based on the actual height of your navbar */
-    margin-top: 2rem; /* Adjust the value for desired spacing */
-}
-    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/responsive.dataTables.min.css">php artisan vendor:publish --tag=larapex-charts-config
  
  
 </head>
 <body>
 
-     <!-- NAVBAR-->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg fixed-top animate__animated animate__fadeInDown">
-          <div class="container">
-            <a class="navbar-brand" href="#">User Data</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse text-right" id="navbarText">
-              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link" href="#Layanan">Layanan</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#Tentang">Tentang</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#Staff">Staff</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#Kontak">Kontak Kami</a>
-                </li>
-              </ul>
-            </div>
+    <!-- NAVBAR-->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg fixed-top animate__animated animate__fadeInDown">
+        <div class="container">
+          <a class="navbar-brand" href="#">User Data</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse text-right" id="navbarText">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="#myTable">Data Pengguna</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#Tentang">Tentang</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#Staff">Staff</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#Kontak">Kontak Kami</a>
+              </li>
+            </ul>
           </div>
-        </nav>
-        <!-- END NAVBAR -->
+        </div>
+      </nav>
+    <!-- END NAVBAR -->
 
     
     <div class="container mt-5">
-      
+        <!-- Start Table -->
         <table id="myTable" class="table table-striped">
             <thead>
                 <tr>
@@ -73,6 +66,14 @@
                 @endforeach
             </tbody>
         </table>
+        <!-- End Table -->
+
+        <!-- Start Charts -->
+        <div class="chart-container">
+            <canvas id="usageChart"></canvas>
+        </div>
+        <!-- End Charts -->
+
     </div>
 
     <!-- jQuery -->
@@ -92,11 +93,16 @@
     
     <!-- Initialize DataTables -->
     <script>
+        // Start Datatable
         $(document).ready(function() {
             $('#myTable').DataTable({
                 responsive: true
             });
         });
+        // End Datatable
+
+        // Start Chart
+        // End Chart
     </script>
 
 </body>
