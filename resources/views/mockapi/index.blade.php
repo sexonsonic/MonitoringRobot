@@ -65,6 +65,11 @@
                     </tr>
                 @endforeach
             </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="3">Total All Usage</th>
+                <th id="totalUsage"></th> </tr>
+            </tfoot>
         </table>
         <!-- End Table -->
 
@@ -95,10 +100,41 @@
     <script>
         // Start Datatable
         $(document).ready(function() {
-            $('#myTable').DataTable({
-                responsive: true
-            });
-        });
+      // Inisialisasi DataTables
+      var table = $('#myTable').DataTable({
+        responsive: true,
+        footerCallback: function (row, data, start, end, display) {
+          var api = this.api(), data;
+ 
+          // Menghitung total penggunaan
+          var intVal = function ( i ) {
+              return typeof i === 'string' ?
+                  i.replace(/[\$,]/g, '')*1 :
+                  typeof i === 'number' ?
+                      i : 0;
+          };
+ 
+          total = api
+              .column( 3 )
+              .data()
+              .reduce( function (a, b) {
+                  return intVal(a) + intVal(b);
+              }, 0   
+ );
+ 
+          // Menampilkan total penggunaan di footer
+          $( api.column( 3 ).footer() ).html(total);
+        }
+      });
+
+      // Fungsi untuk membuat grafik (Anda bisa menyesuaikan dengan library charting yang Anda gunakan)
+      function createChart(totalUsage) {
+        // ... (kode untuk membuat grafik dengan totalUsage)
+      }
+
+      // Memanggil fungsi untuk membuat grafik setelah DataTables selesai diinisialisasi
+      createChart(totalUsage);
+    });
         // End Datatable
 
         // Start Chart
