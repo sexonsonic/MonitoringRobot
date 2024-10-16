@@ -10,7 +10,7 @@
     
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/responsive.dataTables.min.css">php artisan vendor:publish --tag=larapex-charts-config
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/responsive.dataTables.min.css">
  
  
 </head>
@@ -44,38 +44,79 @@
     <!-- END NAVBAR -->
 
     
-    <div class="container mt-5">
+    <div class="container mt-5 pt-5">
         <!-- Start Table -->
         <table id="myTable" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Tipe Instansi</th>
-                    <th>Nama Bot</th>
-                    <th>Chat ID</th>
-                    <th>Usage</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($data as $user)
-                    <tr>
-                        <td>{{ $user['tipe'] ?? 'Null' }}</td>
-                        <td>{{ $user['namabot'] ?? 'Null' }}</td>
-                        <td>{{ $user['chatid'] ?? 'Null' }}</td>
-                        <td>{{ $user['usage'] ?? 'Null' }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colspan="3">Total All Usage</th>
-                <th id="totalUsage"></th> </tr>
-            </tfoot>
+          <thead>
+            <tr>
+              <th>Tipe Instansi</th>
+              <th>Nama Bot</th>
+              <th>Total Usage</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+              $groupedData = [];
+              foreach ($data as $user) {
+                $botName = $user['namabot'];
+                if (!isset($groupedData[$botName])) {
+                  $groupedData[$botName] = [
+                    'tipe' => $user['tipe'],
+                    'namabot' => $botName,
+                    'totalUsage' => 0,
+                  ];
+                }
+                $groupedData[$botName]['totalUsage'] += $user['usage'];
+              }
+            ?>
+
+            <?php foreach ($groupedData as $botName => $item) : ?>
+              <tr data-bs-toggle="modal" data-bs-target="#botDetailsModal" data-bot-name="<?= $botName ?>">
+                  <td><?= $item['tipe'] ?></td>
+                  <td><?= $item['namabot'] ?></td>
+                  <td><?= $item['totalUsage'] ?></td>
+                  <td></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
         </table>
+        
+        <!-- Start Modal Details -->
+        <div class="modal fade" id="botDetailsModal" tabindex="-1" aria-labelledby="botDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="botDetailsModalLabel">Detail Bot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <table id="botDetailsTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Chat ID</th>
+                            <th>Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End Modal Detail -->
         <!-- End Table -->
 
         <!-- Start Charts -->
-        <div class="chart-container">
-            <canvas id="usageChart"></canvas>
+        <div style="width: 80%; margin: auto;">
+          <canvas id="myChart"></canvas>
         </div>
         <!-- End Charts -->
 
@@ -93,53 +134,61 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>   
 
-    <script src="https://cdn.datatables.net/1.13.4/js/responsive.dataTables.min.js"></script>   
+    <script src="https://cdn.datatables.net/1.13.4/js/responsive.dataTables.min.js"></script>
+    
+    <!-- Chart JS   -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
 
     
     <!-- Initialize DataTables -->
     <script>
-        // Start Datatable
-        $(document).ready(function() {
-      // Inisialisasi DataTables
-      var table = $('#myTable').DataTable({
-        responsive: true,
-        footerCallback: function (row, data, start, end, display) {
-          var api = this.api(), data;
- 
-          // Menghitung total penggunaan
-          var intVal = function ( i ) {
-              return typeof i === 'string' ?
-                  i.replace(/[\$,]/g, '')*1 :
-                  typeof i === 'number' ?
-                      i : 0;
-          };
- 
-          total = api
-              .column( 3 )
-              .data()
-              .reduce( function (a, b) {
-                  return intVal(a) + intVal(b);
-              }, 0   
- );
- 
-          // Menampilkan total penggunaan di footer
-          $( api.column( 3 ).footer() ).html(total);
-        }
-      });
+    $(document).ready(function() {
+        $('#myTable').DataTable({
+            responsive: true
+        });
 
-      // Fungsi untuk membuat grafik (Anda bisa menyesuaikan dengan library charting yang Anda gunakan)
-      function createChart(totalUsage) {
-        // ... (kode untuk membuat grafik dengan totalUsage)
-      }
+        // Event untuk menangani klik pada baris tabel
+        $('#myTable tbody').on('click', 'tr', function() {
+            var botName = $(this).find('td:nth-child(2)').text(); // Ambil nama bot dari kolom kedua
 
-      // Memanggil fungsi untuk membuat grafik setelah DataTables selesai diinisialisasi
-      createChart(totalUsage);
+            // Filter data dari array asli sesuai dengan bot yang diklik
+            var botDetails = <?php echo json_encode($data); ?>.filter(function(user) {
+                return user.namabot === botName;
+            });
+
+            // Kosongkan isi tabel modal sebelumnya
+            var modalBody = $('#botDetailsTable tbody');
+            modalBody.empty();
+
+            // Tambahkan data bot ke tabel modal
+            botDetails.forEach(function(detail) {
+                modalBody.append('<tr><td>' + detail.chatid + '</td><td>' + detail.usage + '</td></tr>');
+            });
+
+            // Inisialisasi DataTables jika belum diinisialisasi
+            if (!$.fn.DataTable.isDataTable('#botDetailsTable')) {
+                $('#botDetailsTable').DataTable({
+                    responsive: true
+                });
+            } else {
+                // Jika sudah diinisialisasi, refresh data
+                var table = $('#botDetailsTable').DataTable();
+                table.clear(); // Hapus data lama
+                botDetails.forEach(function(detail) {
+                    table.row.add([detail.chatid, detail.usage]);
+                });
+                table.draw(); // Gambar ulang tabel dengan data baru
+            }
+
+            // Tampilkan modal
+            $('#botDetailsModal').modal('show');
+        });
     });
-        // End Datatable
+</script>
 
-        // Start Chart
-        // End Chart
-    </script>
+
+
 
 </body>
 </html>
