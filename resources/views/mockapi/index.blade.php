@@ -49,9 +49,9 @@
 
 
     <div class="container mt-5 pt-5">
-      <div>
-      <h3>Usage Keseluruhan</h3>
-        <canvas id="overallUsageChart" width="400" height="150"></canvas>
+        <div>
+            <h3>Usage Keseluruhan</h3>
+            <canvas id="overallUsageChart" width="400" height="150"></canvas>
         </div>
         <!-- Start Table -->
         <table id="myTable" class="table table-striped">
@@ -89,13 +89,13 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-                        <!-- chart -->
-                        <?php 
-                usort($groupedData, function ($a, $b) {
-                  return $b['totalUsage'] <=> $a['totalUsage'];
-                   });
-                  $top5Usage = array_slice($groupedData, 0, 5);
-                ?>
+        <!-- chart -->
+        <?php
+        usort($groupedData, function ($a, $b) {
+            return $b['totalUsage'] <=> $a['totalUsage'];
+        });
+        $top5Usage = array_slice($groupedData, 0, 5);
+        ?>
 
         <!-- Start Modal Details -->
         <div class="modal fade" id="botDetailsModal" tabindex="-1" aria-labelledby="botDetailsModalLabel"
@@ -212,8 +212,8 @@
 
     <!-- start initialize chart -->
     <script>
-               // Event untuk menangani klik pada baris tabel
-               $('#myTable tbody').on('click', 'tr', function() {
+        // Event untuk menangani klik pada baris tabel
+        $('#myTable tbody').on('click', 'tr', function() {
             var botName = $(this).find('td:nth-child(2)').text(); // Ambil nama bot dari kolom kedua
 
             // Filter data dari array asli sesuai dengan bot yang diklik
@@ -254,8 +254,8 @@
         var botUsages = [];
 
         <?php foreach ($top5Usage as $item) : ?>
-            botNames.push('<?= $item['namabot'] ?>'); // Menyimpan nama bot
-            botUsages.push(<?= $item['totalUsage'] ?>); // Menyimpan total usage
+        botNames.push('<?= $item['namabot'] ?>'); // Menyimpan nama bot
+        botUsages.push(<?= $item['totalUsage'] ?>); // Menyimpan total usage
         <?php endforeach; ?>
 
         var ctx = document.getElementById('overallUsageChart').getContext('2d');
