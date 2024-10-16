@@ -61,7 +61,7 @@
               foreach ($data as $user) {
                 $botName = $user['namabot'];
                 if (!isset($groupedData[$botName])) {
-                  $groupedData[$botName] = [
+$groupedData[$botName] = [
                     'tipe' => $user['tipe'],
                     'namabot' => $botName,
                     'totalUsage' => 0,
