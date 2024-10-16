@@ -50,10 +50,15 @@
 
     <div class="container mt-5 pt-5">
         <div>
-            <h3>Usage Keseluruhan</h3>
+            <center>
+                <h3>Usage Keseluruhan</h3>
+            </center>
             <canvas id="overallUsageChart" width="400" height="150"></canvas>
-        </div>
+        </div><br><br>
         <!-- Start Table -->
+        <center>
+            <h3>Data Pengguna Robot</h3>
+        </center>
         <table id="myTable" class="table table-striped">
             <thead>
                 <tr>
@@ -65,21 +70,21 @@
             </thead>
             <tbody>
                 <?php
-                $groupedData = [];
-                foreach ($data as $user) {
-                    $botName = $user['namabot'];
-                    if (!isset($groupedData[$botName])) {
-                        $groupedData[$botName] = [
-                            'tipe' => $user['tipe'],
-                            'namabot' => $botName,
-                            'totalUsage' => 0,
-                        ];
-                    }
-                    $groupedData[$botName]['totalUsage'] += $user['usage'];
-                }
+$groupedData = [];
+foreach ($data as $user) {
+    $botName = $user['namabot'];
+    if (!isset($groupedData[$botName])) {
+        $groupedData[$botName] = [
+            'tipe' => $user['tipe'],
+            'namabot' => $botName,
+            'totalUsage' => 0,
+        ];
+    }
+    $groupedData[$botName]['totalUsage'] += $user['usage'];
+}
                 ?>
 
-                <?php foreach ($groupedData as $botName => $item) : ?>
+                <?php foreach ($groupedData as $botName => $item): ?>
                 <tr data-bs-toggle="modal" data-bs-target="#botDetailsModal" data-bot-name="<?= $botName ?>">
                     <td><?= $item['tipe'] ?></td>
                     <td><?= $item['namabot'] ?></td>
@@ -91,10 +96,10 @@
         </table>
         <!-- chart -->
         <?php
-        usort($groupedData, function ($a, $b) {
-            return $b['totalUsage'] <=> $a['totalUsage'];
-        });
-        $top5Usage = array_slice($groupedData, 0, 5);
+usort($groupedData, function ($a, $b) {
+    return $b['totalUsage'] <=> $a['totalUsage'];
+});
+$top5Usage = array_slice($groupedData, 0, 5);
         ?>
 
         <!-- Start Modal Details -->
@@ -141,12 +146,12 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha384-KJ3oAiL9yI6zDdM0D4kZgOY1CkA9i8Rt6h3bRzpV3PVRD9gFl59EJQCrFFk13X1L" crossorigin="anonymous">
-    </script>
+        </script>
 
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRsQQxSFFwpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-    </script>
+        </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 
@@ -164,17 +169,17 @@
 
     <!-- Initialize DataTables -->
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#myTable').DataTable({
                 responsive: true
             });
 
             // Event untuk menangani klik pada baris tabel
-            $('#myTable tbody').on('click', 'tr', function() {
+            $('#myTable tbody').on('click', 'tr', function () {
                 var botName = $(this).find('td:nth-child(2)').text(); // Ambil nama bot dari kolom kedua
 
                 // Filter data dari array asli sesuai dengan bot yang diklik
-                var botDetails = <?php echo json_encode($data); ?>.filter(function(user) {
+                var botDetails = <?php echo json_encode($data); ?>.filter(function (user) {
                     return user.namabot === botName;
                 });
 
@@ -183,7 +188,7 @@
                 modalBody.empty();
 
                 // Tambahkan data bot ke tabel modal
-                botDetails.forEach(function(detail) {
+                botDetails.forEach(function (detail) {
                     modalBody.append('<tr><td>' + detail.chatid + '</td><td>' + detail.usage +
                         '</td></tr>');
                 });
@@ -197,7 +202,7 @@
                     // Jika sudah diinisialisasi, refresh data
                     var table = $('#botDetailsTable').DataTable();
                     table.clear(); // Hapus data lama
-                    botDetails.forEach(function(detail) {
+                    botDetails.forEach(function (detail) {
                         table.row.add([detail.chatid, detail.usage]);
                     });
                     table.draw(); // Gambar ulang tabel dengan data baru
@@ -213,11 +218,11 @@
     <!-- start initialize chart -->
     <script>
         // Event untuk menangani klik pada baris tabel
-        $('#myTable tbody').on('click', 'tr', function() {
+        $('#myTable tbody').on('click', 'tr', function () {
             var botName = $(this).find('td:nth-child(2)').text(); // Ambil nama bot dari kolom kedua
 
             // Filter data dari array asli sesuai dengan bot yang diklik
-            var botDetails = <?php echo json_encode($data); ?>.filter(function(user) {
+            var botDetails = <?php echo json_encode($data); ?>.filter(function (user) {
                 return user.namabot === botName;
             });
 
@@ -226,7 +231,7 @@
             modalBody.empty();
 
             // Tambahkan data bot ke tabel modal
-            botDetails.forEach(function(detail) {
+            botDetails.forEach(function (detail) {
                 modalBody.append('<tr><td>' + detail.chatid + '</td><td>' + detail.usage + '</td></tr>');
             });
 
@@ -239,7 +244,7 @@
                 // Jika sudah diinisialisasi, refresh data
                 var table = $('#botDetailsTable').DataTable();
                 table.clear(); // Hapus data lama
-                botDetails.forEach(function(detail) {
+                botDetails.forEach(function (detail) {
                     table.row.add([detail.chatid, detail.usage]);
                 });
                 table.draw(); // Gambar ulang tabel dengan data baru
@@ -253,7 +258,7 @@
         var botNames = [];
         var botUsages = [];
 
-        <?php foreach ($top5Usage as $item) : ?>
+        <?php foreach ($top5Usage as $item): ?>
         botNames.push('<?= $item['namabot'] ?>'); // Menyimpan nama bot
         botUsages.push(<?= $item['totalUsage'] ?>); // Menyimpan total usage
         <?php endforeach; ?>
