@@ -59,7 +59,42 @@
         <!-- End Usage Total -->
 
         <!-- Start Chart Harian -->
+         <?php
+         $groupedData2 = [];
+         foreach ($data2 as $user2) {
+             $botName2 = $user2['namabot'];
+             if (!isset($groupedData2[$botName2])) {
+                 $groupedData2[$botName2] = [
+                     'namabot' => $botName2,
+                     'dailyUsage' => 0,
+                 ];
+             }
+             $groupedData2[$botName2]['dailyUsage'] += $user2['usage'];
+         }
+         ?>
+
+        <?php
+            $dailyUsageData = []; // Menyimpan data harian
+            usort($groupedData2, function ($a, $b) {
+                return $b['dailyUsage'] <=> $a['dailyUsage'];
+            });
+            $top5DailyUsage = array_slice($groupedData2, 0, 5); // Ambil 5 penggunaan harian tertinggi
+            foreach ($top5DailyUsage as $item) {
+                $dailyUsageData[] = [
+                    'namabot' => $item['namabot'],
+                    'dailyUsage' => $item['dailyUsage'],
+                ];
+            }
+         ?>
+
         <!-- Write the content below -->
+           <!-- Chart Usage harian -->
+        <div id="UsageHarian">
+            <center>
+                <h3>Usage Hari Ini</h3>
+            </center>
+            <canvas id="dailylUsageChart" width="400" height="150"></canvas>
+        </div><br><br>        
         <!-- End Chart Harian -->
 
         <!-- Start Table -->
@@ -142,11 +177,6 @@ $top5Usage = array_slice($groupedData, 0, 5);
         <!-- End Modal Detail -->
         <!-- End Table -->
 
-        <!-- Start Charts -->
-        <div style="width: 80%; margin: auto;">
-            <canvas id="myChart"></canvas>
-        </div>
-        <!-- End Charts -->
 
     </div>
 
@@ -261,23 +291,32 @@ $top5Usage = array_slice($groupedData, 0, 5);
             $('#botDetailsModal').modal('show');
         });
 
-        // Inisialisasi chart untuk 5 penggunaan terbanyak
-        var botNames = [];
-        var botUsages = [];
+        var botNamesTotal = [];
+        var botUsagesTotal = [];
 
         <?php foreach ($top5Usage as $item): ?>
-        botNames.push('<?= $item['namabot'] ?>'); // Menyimpan nama bot
-        botUsages.push(<?= $item['totalUsage'] ?>); // Menyimpan total usage
+        botNamesTotal.push('<?= $item['namabot'] ?>'); // Nama bot untuk total usage
+        botUsagesTotal.push(<?= $item['totalUsage'] ?>); // Total usage per bot
         <?php endforeach; ?>
 
-        var ctx = document.getElementById('overallUsageChart').getContext('2d');
-        var overallUsageChart = new Chart(ctx, {
-            type: 'bar', // jenis chart: bar
+        // Data untuk Daily Usage (chart 2)
+        var botNamesDaily = [];
+        var botUsagesDaily = [];
+
+        <?php foreach ($top5DailyUsage as $item): ?>
+        botNamesDaily.push('<?= $item['namabot'] ?>'); // Nama bot untuk daily usage
+        botUsagesDaily.push(<?= $item['dailyUsage'] ?>); // Daily usage per bot
+        <?php endforeach; ?>
+
+        // Chart untuk Total Usage
+        var ctxTotal = document.getElementById('overallUsageChart').getContext('2d');
+        var overallUsageChart = new Chart(ctxTotal, {
+            type: 'bar',
             data: {
-                labels: botNames, // nama-nama bot
+                labels: botNamesTotal,
                 datasets: [{
                     label: 'Total Usage',
-                    data: botUsages, // total usage untuk setiap bot
+                    data: botUsagesTotal,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
@@ -291,6 +330,38 @@ $top5Usage = array_slice($groupedData, 0, 5);
                 }
             }
         });
+
+        // Chart untuk Daily Usage
+        var botNamesDaily = [];
+var botUsagesDaily = [];
+
+<?php foreach ($top5DailyUsage as $item): ?>
+botNamesDaily.push('<?= $item['namabot'] ?>'); // Nama bot untuk daily usage
+botUsagesDaily.push(<?= $item['dailyUsage'] ?>); // Daily usage per bot
+<?php endforeach; ?>
+
+// Chart untuk Daily Usage
+var ctxDaily = document.getElementById('dailylUsageChart').getContext('2d');
+var dailyUsageChart = new Chart(ctxDaily, {
+    type: 'bar',
+    data: {
+        labels: botNamesDaily,
+        datasets: [{
+            label: 'Daily Usage',
+            data: botUsagesDaily,
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
     </script>
     <!-- end initialize chart -->
 </body>
