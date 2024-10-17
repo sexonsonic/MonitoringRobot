@@ -11,19 +11,28 @@ class UsersApiController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-    $response = Http::withOptions([
-        'verify' => false,
-    ])->get('https://main.robotahli.id/html/usage?list=1');
-    
-    // Assuming the API returns JSON data
-    $data = $response->json(); // Convert JSON to array
+    {
+        $response = Http::withOptions([
+            'verify' => false,
+        ])->get('https://main.robotahli.id/html/usage?list=1');
 
-    // Optional: Validate the structure
-    // dd($data);
+        $response2 = Http::withOptions([
+            'verify' => false,
+        ])->get('https://main.robotahli.id/html/dusage?list=1');
 
-    return view('mockapi.index', ["data" => $data]);
-}
+        // Assuming the API returns JSON data
+        $data = $response->json(); // Convert JSON to array
+        $data2 = $response2->json();
+
+        // Optional: Validate the structure
+        $mergeData = array_merge($data, $data2);
+
+        return view('mockapi.index', [
+            "data" => $data,
+            "data2" => $data2,
+            "mergeData" => $mergeData
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */

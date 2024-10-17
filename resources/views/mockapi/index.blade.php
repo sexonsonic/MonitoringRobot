@@ -49,12 +49,19 @@
 
 
     <div class="container mt-5 pt-5">
+        <!-- Chart Usage Total -->
         <div id="UsageTotal">
             <center>
                 <h3>Usage Keseluruhan</h3>
             </center>
             <canvas id="overallUsageChart" width="400" height="150"></canvas>
         </div><br><br>
+        <!-- End Usage Total -->
+
+        <!-- Start Chart Harian -->
+        <!-- Write the content below -->
+        <!-- End Chart Harian -->
+
         <!-- Start Table -->
         <center>
             <h3>Data Pengguna Robot</h3>
