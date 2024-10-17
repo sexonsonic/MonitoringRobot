@@ -30,10 +30,10 @@
             <div class="collapse navbar-collapse text-right" id="navbarText">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="#myTable">Data Pengguna</a>
+                        <a class="nav-link" href="#UsageTotal">Usage Total</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#Tentang">Tentang</a>
+                        <a class="nav-link" href="#myTable">Data Pengguna</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#Staff">Staff</a>
@@ -49,7 +49,7 @@
 
 
     <div class="container mt-5 pt-5">
-        <div>
+        <div id="UsageTotal">
             <center>
                 <h3>Usage Keseluruhan</h3>
             </center>
