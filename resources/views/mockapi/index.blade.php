@@ -47,71 +47,73 @@
     </nav>
     <!-- END NAVBAR -->
 
-
+    <!-- CONTENT -->
     <div class="container mt-5 pt-5">
-        <!-- Chart Usage Total -->
-        <div id="UsageTotal">
-            <center>
-                <h3>Usage Keseluruhan</h3>
-            </center>
-            <canvas id="overallUsageChart" width="400" height="150"></canvas>
-        </div><br><br>
-        <!-- End Usage Total -->
+        <!-- START CHART -->
+        <div class="row">
+            <!-- CHART USAGE TOTAL -->
+            <div id="UsageTotal" class="col-md-6">
+                <center>
+                    <h3>Usage Keseluruhan</h3>
+                </center>
+                <canvas id="overallUsageChart" width="400" height="150"></canvas>
+            </div>
+            <!-- END CHART USAGE TOTAL -->
 
-        <!-- Start Chart Harian -->
-         <?php
-         $groupedData2 = [];
-         foreach ($data2 as $user2) {
-             $botName2 = $user2['namabot'];
-             if (!isset($groupedData2[$botName2])) {
-                 $groupedData2[$botName2] = [
-                     'namabot' => $botName2,
-                     'dailyUsage' => 0,
-                 ];
-             }
-             $groupedData2[$botName2]['dailyUsage'] += $user2['usage'];
-         }
-         ?>
-
-        <?php
-            $dailyUsageData = []; // Menyimpan data harian
-            usort($groupedData2, function ($a, $b) {
-                return $b['dailyUsage'] <=> $a['dailyUsage'];
-            });
-            $top5DailyUsage = array_slice($groupedData2, 0, 5); // Ambil 5 penggunaan harian tertinggi
-            foreach ($top5DailyUsage as $item) {
-                $dailyUsageData[] = [
-                    'namabot' => $item['namabot'],
-                    'dailyUsage' => $item['dailyUsage'],
-                ];
-            }
-         ?>
-
-        <!-- Write the content below -->
-           <!-- Chart Usage harian -->
-        <div id="UsageHarian">
-            <center>
-                <h3>Usage Hari Ini</h3>
-            </center>
-            <canvas id="dailylUsageChart" width="400" height="150"></canvas>
-        </div><br><br>        
-        <!-- End Chart Harian -->
-
-        <!-- Start Table -->
-        <center>
-            <h3>Data Pengguna Robot</h3>
-        </center>
-        <table id="myTable" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Tipe Instansi</th>
-                    <th>Nama Bot</th>
-                    <th>Total Usage</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
+            <!-- START CHART USAGE DAILY -->
+            <div id="UsageHarian" class="col-md-6">
                 <?php
+$groupedData2 = [];
+foreach ($data2 as $user2) {
+    $botName2 = $user2['namabot'];
+    if (!isset($groupedData2[$botName2])) {
+        $groupedData2[$botName2] = [
+            'namabot' => $botName2,
+            'dailyUsage' => 0,
+        ];
+    }
+    $groupedData2[$botName2]['dailyUsage'] += $user2['usage'];
+}
+                ?>
+
+                <?php
+$dailyUsageData = []; // Menyimpan data harian
+usort($groupedData2, function ($a, $b) {
+    return $b['dailyUsage'] <=> $a['dailyUsage'];
+});
+$top5DailyUsage = array_slice($groupedData2, 0, 5); // Ambil 5 penggunaan harian tertinggi
+foreach ($top5DailyUsage as $item) {
+    $dailyUsageData[] = [
+        'namabot' => $item['namabot'],
+        'dailyUsage' => $item['dailyUsage'],
+    ];
+}
+                ?>
+                <center>
+                    <h3>Usage Hari Ini</h3>
+                </center>
+                <canvas id="dailylUsageChart" width="400" height="150"></canvas>
+            </div><br><br>
+            <!-- END CHART DAILY USAGE -->
+        </div>
+        <!-- END CHART -->
+
+        <!-- START TABLE -->
+        <div class="TabelUsage mt-5">
+            <center>
+                <h3>Data Pengguna Robot</h3>
+            </center>
+            <table id="myTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Tipe Instansi</th>
+                        <th>Nama Bot</th>
+                        <th>Total Usage</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
 $groupedData = [];
 foreach ($data as $user) {
     $botName = $user['namabot'];
@@ -126,23 +128,27 @@ foreach ($data as $user) {
 }
                 ?>
 
-                <?php foreach ($groupedData as $botName => $item): ?>
-                <tr data-bs-toggle="modal" data-bs-target="#botDetailsModal" data-bot-name="<?= $botName ?>">
-                    <td><?= $item['tipe'] ?></td>
-                    <td><?= $item['namabot'] ?></td>
-                    <td><?= $item['totalUsage'] ?></td>
-                    <td></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <!-- chart -->
+                    <?php foreach ($groupedData as $botName => $item): ?>
+                    <tr data-bs-toggle="modal" data-bs-target="#botDetailsModal" data-bot-name="<?= $botName ?>">
+                        <td><?= $item['tipe'] ?></td>
+                        <td><?= $item['namabot'] ?></td>
+                        <td><?= $item['totalUsage'] ?></td>
+                        <td></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <!-- END TABLE -->
+
+        <!-- Function Chart Total Usage -->
         <?php
 usort($groupedData, function ($a, $b) {
     return $b['totalUsage'] <=> $a['totalUsage'];
 });
 $top5Usage = array_slice($groupedData, 0, 5);
         ?>
+        <!-- End Function Chart Total Usage -->
 
         <!-- Start Modal Details -->
         <div class="modal fade" id="botDetailsModal" tabindex="-1" aria-labelledby="botDetailsModalLabel"
@@ -179,6 +185,7 @@ $top5Usage = array_slice($groupedData, 0, 5);
 
 
     </div>
+    <!-- END CONTENT -->
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"
@@ -332,36 +339,27 @@ $top5Usage = array_slice($groupedData, 0, 5);
         });
 
         // Chart untuk Daily Usage
-        var botNamesDaily = [];
-var botUsagesDaily = [];
-
-<?php foreach ($top5DailyUsage as $item): ?>
-botNamesDaily.push('<?= $item['namabot'] ?>'); // Nama bot untuk daily usage
-botUsagesDaily.push(<?= $item['dailyUsage'] ?>); // Daily usage per bot
-<?php endforeach; ?>
-
-// Chart untuk Daily Usage
-var ctxDaily = document.getElementById('dailylUsageChart').getContext('2d');
-var dailyUsageChart = new Chart(ctxDaily, {
-    type: 'bar',
-    data: {
-        labels: botNamesDaily,
-        datasets: [{
-            label: 'Daily Usage',
-            data: botUsagesDaily,
-            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+        var ctxDaily = document.getElementById('dailylUsageChart').getContext('2d');
+        var dailyUsageChart = new Chart(ctxDaily, {
+            type: 'bar',
+            data: {
+                labels: botNamesDaily,
+                datasets: [{
+                    label: 'Daily Usage',
+                    data: botUsagesDaily,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        }
-    }
-});
+        });
     </script>
     <!-- end initialize chart -->
 </body>
