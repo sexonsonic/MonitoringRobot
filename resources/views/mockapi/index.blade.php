@@ -33,7 +33,7 @@
                         <a class="nav-link" href="#UsageTotal">Usage Total</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#myTable">Data Pengguna</a>
+                        <a class="nav-link" href="#myTableDaily">Data Pengguna</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#Staff">Staff</a>
@@ -49,17 +49,11 @@
 
     <!-- CONTENT -->
     <div class="container mt-5 pt-5">
-        <!-- START CHART -->
+        <!-- START CHART & TABLES DAILY USAGE -->
         <div class="row">
-            <!-- CHART USAGE TOTAL -->
-            <div id="UsageTotal" class="col-md-6">
-                <center>
-                    <h3>Usage Keseluruhan</h3>
-                </center>
-                <canvas id="overallUsageChart" width="400" height="150"></canvas>
-            </div>
-            <!-- END CHART USAGE TOTAL -->
-
+            <center>
+                <h2>Usage Harian</h2>
+            </center><br><br>
             <!-- START CHART USAGE DAILY -->
             <div id="UsageHarian" class="col-md-6">
                 <?php
@@ -92,28 +86,118 @@ foreach ($top5DailyUsage as $item) {
                 <center>
                     <h3>Usage Hari Ini</h3>
                 </center>
-                <canvas id="dailylUsageChart" width="400" height="150"></canvas>
+                <canvas id="dailylUsageChart" width="400" height="310"></canvas>
             </div><br><br>
             <!-- END CHART DAILY USAGE -->
-        </div>
-        <!-- END CHART -->
 
-        <!-- START TABLE -->
-        <div class="TabelUsage mt-5">
+            <!-- START TABLE -->
+            <div class="TabelUsage col-md-6">
+                <table id="myTableDaily" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tipe Instansi</th>
+                            <th>Nama Bot</th>
+                            <th>Total Usage</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+$groupedData2 = [];
+foreach ($data2 as $user) {
+    $botName = $user['namabot'];
+    if (!isset($groupedData2[$botName])) {
+        $groupedData2[$botName] = [
+            'tipe' => $user['tipe'],
+            'namabot' => $botName,
+            'totalUsage' => 0,
+        ];
+    }
+    $groupedData2[$botName]['totalUsage'] += $user['usage'];
+}
+                        ?>
+
+                        <?php foreach ($groupedData2 as $botName => $item): ?>
+                        <tr data-bs-toggle="modal" data-bs-target="#botDetailsModal" data-bot-name="<?= $botName ?>">
+                            <td><?= $item['tipe'] ?></td>
+                            <td><?= $item['namabot'] ?></td>
+                            <td><?= $item['totalUsage'] ?></td>
+                            <td></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <!-- END TABLE -->
+
+            <!-- Function Chart Daily Usage -->
+            <?php
+usort($groupedData2, function ($a, $b) {
+    return $b['totalUsage'] <=> $a['totalUsage'];
+});
+$top5Usage = array_slice($groupedData2, 0, 5);
+            ?>
+            <!-- End Function Chart Daily Usage -->
+
+            <!-- Start Modal Details -->
+            <div class="modal fade" id="botDetailsModalDaily" tabindex="-1" aria-labelledby="botDetailsModalLabelDaily"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="botDetailsModalLabelDaily">Detail Bot</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                            <table id="botDetailsTableDaily" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Chat ID</th>
+                                        <th>Usage</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End Modal Detail -->
+            <!-- End Table -->
+        </div>
+        <!-- END CHART & TABLES DAILY USAGE -->
+
+        <!-- START CHART & TABLES TOTAL USAGE -->
+        <div class="row mt-5 mb-2">
             <center>
-                <h3>Data Pengguna Robot</h3>
-            </center>
-            <table id="myTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Tipe Instansi</th>
-                        <th>Nama Bot</th>
-                        <th>Total Usage</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
+                <h2 class="">Usage Keseluruhan</h2>
+            </center><br><br>
+            <!-- CHART USAGE TOTAL -->
+            <div id="UsageTotal" class="col-md-6">
+                <canvas id="overallUsageChart" width="400" height="335"></canvas>
+            </div>
+            <!-- END CHART USAGE TOTAL -->
+
+            <!-- START TABLE -->
+            <div class="TabelUsage col-md-6">
+                <table id="myTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tipe Instansi</th>
+                            <th>Nama Bot</th>
+                            <th>Total Usage</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
 $groupedData = [];
 foreach ($data as $user) {
     $botName = $user['namabot'];
@@ -126,63 +210,65 @@ foreach ($data as $user) {
     }
     $groupedData[$botName]['totalUsage'] += $user['usage'];
 }
-                ?>
+                        ?>
 
-                    <?php foreach ($groupedData as $botName => $item): ?>
-                    <tr data-bs-toggle="modal" data-bs-target="#botDetailsModal" data-bot-name="<?= $botName ?>">
-                        <td><?= $item['tipe'] ?></td>
-                        <td><?= $item['namabot'] ?></td>
-                        <td><?= $item['totalUsage'] ?></td>
-                        <td></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <!-- END TABLE -->
+                        <?php foreach ($groupedData as $botName => $item): ?>
+                        <tr data-bs-toggle="modal" data-bs-target="#botDetailsModal" data-bot-name="<?= $botName ?>">
+                            <td><?= $item['tipe'] ?></td>
+                            <td><?= $item['namabot'] ?></td>
+                            <td><?= $item['totalUsage'] ?></td>
+                            <td></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <!-- END TABLE -->
 
-        <!-- Function Chart Total Usage -->
-        <?php
+            <!-- Function Chart Total Usage -->
+            <?php
 usort($groupedData, function ($a, $b) {
     return $b['totalUsage'] <=> $a['totalUsage'];
 });
 $top5Usage = array_slice($groupedData, 0, 5);
-        ?>
-        <!-- End Function Chart Total Usage -->
+            ?>
+            <!-- End Function Chart Total Usage -->
 
-        <!-- Start Modal Details -->
-        <div class="modal fade" id="botDetailsModal" tabindex="-1" aria-labelledby="botDetailsModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="botDetailsModalLabel">Detail Bot</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <!-- Modal Body -->
-                    <div class="modal-body">
-                        <table id="botDetailsTable" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Chat ID</th>
-                                    <th>Usage</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <!-- Modal Footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!-- Start Modal Details -->
+            <div class="modal fade" id="botDetailsModal" tabindex="-1" aria-labelledby="botDetailsModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="botDetailsModalLabel">Detail Bot</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                            <table id="botDetailsTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Chat ID</th>
+                                        <th>Usage</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- End Modal Detail -->
+            <!-- End Table -->
+
         </div>
-
-        <!-- End Modal Detail -->
-        <!-- End Table -->
-
+        <!-- END CHART & TABLES TOTAL USAGE -->
 
     </div>
     <!-- END CONTENT -->
@@ -211,7 +297,7 @@ $top5Usage = array_slice($groupedData, 0, 5);
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-    <!-- Initialize DataTables -->
+    <!-- Initialize DataTables Total -->
     <script>
         $(document).ready(function () {
             $('#myTable').DataTable({
@@ -256,11 +342,7 @@ $top5Usage = array_slice($groupedData, 0, 5);
                 $('#botDetailsModal').modal('show');
             });
         });
-    </script>
-    <!-- end initialize data tables-->
 
-    <!-- start initialize chart -->
-    <script>
         // Event untuk menangani klik pada baris tabel
         $('#myTable tbody').on('click', 'tr', function () {
             var botName = $(this).find('td:nth-child(2)').text(); // Ambil nama bot dari kolom kedua
@@ -297,22 +379,104 @@ $top5Usage = array_slice($groupedData, 0, 5);
             // Tampilkan modal
             $('#botDetailsModal').modal('show');
         });
+    </script>
+    <!-- end initialize data tables Total -->
 
+    <!-- Initialize Datatables Daily -->
+    <script>
+        $(document).ready(function () {
+            $('#myTableDaily').DataTable({
+                responsive: true
+            });
+
+            // Event untuk menangani klik pada baris tabel
+            $('#myTableDaily tbody').on('click', 'tr', function () {
+                var botName = $(this).find('td:nth-child(2)').text(); // Ambil nama bot dari kolom kedua
+
+                // Filter data dari array asli sesuai dengan bot yang diklik
+                var botDetails = <?php echo json_encode($data); ?>.filter(function (user) {
+                    return user.namabot === botName;
+                });
+
+                // Kosongkan isi tabel modal sebelumnya
+                var modalBody = $('#botDetailsTable tbody');
+                modalBody.empty();
+
+                // Tambahkan data bot ke tabel modal
+                botDetails.forEach(function (detail) {
+                    modalBody.append('<tr><td>' + detail.chatid + '</td><td>' + detail.usage +
+                        '</td></tr>');
+                });
+
+                // Inisialisasi DataTables jika belum diinisialisasi
+                if (!$.fn.DataTable.isDataTable('#botDetailsTable')) {
+                    $('#botDetailsTable').DataTable({
+                        responsive: true
+                    });
+                } else {
+                    // Jika sudah diinisialisasi, refresh data
+                    var table = $('#botDetailsTable').DataTable();
+                    table.clear(); // Hapus data lama
+                    botDetails.forEach(function (detail) {
+                        table.row.add([detail.chatid, detail.usage]);
+                    });
+                    table.draw(); // Gambar ulang tabel dengan data baru
+                }
+
+                // Tampilkan modal
+                $('#botDetailsModal').modal('show');
+            });
+        });
+
+        // Event untuk menangani klik pada baris tabel
+        $('#myTableDaily tbody').on('click', 'tr', function () {
+            var botName = $(this).find('td:nth-child(2)').text(); // Ambil nama bot dari kolom kedua
+
+            // Filter data dari array asli sesuai dengan bot yang diklik
+            var botDetails = <?php echo json_encode($data); ?>.filter(function (user) {
+                return user.namabot === botName;
+            });
+
+            // Kosongkan isi tabel modal sebelumnya
+            var modalBody = $('#botDetailsTable tbody');
+            modalBody.empty();
+
+            // Tambahkan data bot ke tabel modal
+            botDetails.forEach(function (detail) {
+                modalBody.append('<tr><td>' + detail.chatid + '</td><td>' + detail.usage + '</td></tr>');
+            });
+
+            // Inisialisasi DataTables jika belum diinisialisasi
+            if (!$.fn.DataTable.isDataTable('#botDetailsTable')) {
+                $('#botDetailsTable').DataTable({
+                    responsive: true
+                });
+            } else {
+                // Jika sudah diinisialisasi, refresh data
+                var table = $('#botDetailsTable').DataTable();
+                table.clear(); // Hapus data lama
+                botDetails.forEach(function (detail) {
+                    table.row.add([detail.chatid, detail.usage]);
+                });
+                table.draw(); // Gambar ulang tabel dengan data baru
+            }
+
+            // Tampilkan modal
+            $('#botDetailsModal').modal('show');
+        });
+
+    </script>
+    <!-- End initialize datatable Daily -->
+
+    <!-- start initialize chart -->
+    <script>
+        // Usage Total
         var botNamesTotal = [];
         var botUsagesTotal = [];
 
         <?php foreach ($top5Usage as $item): ?>
         botNamesTotal.push('<?= $item['namabot'] ?>'); // Nama bot untuk total usage
         botUsagesTotal.push(<?= $item['totalUsage'] ?>); // Total usage per bot
-        <?php endforeach; ?>
-
-        // Data untuk Daily Usage (chart 2)
-        var botNamesDaily = [];
-        var botUsagesDaily = [];
-
-        <?php foreach ($top5DailyUsage as $item): ?>
-        botNamesDaily.push('<?= $item['namabot'] ?>'); // Nama bot untuk daily usage
-        botUsagesDaily.push(<?= $item['dailyUsage'] ?>); // Daily usage per bot
         <?php endforeach; ?>
 
         // Chart untuk Total Usage
@@ -337,6 +501,15 @@ $top5Usage = array_slice($groupedData, 0, 5);
                 }
             }
         });
+
+        // Data untuk Daily Usage (chart 2)
+        var botNamesDaily = [];
+        var botUsagesDaily = [];
+
+        <?php foreach ($top5DailyUsage as $item): ?>
+        botNamesDaily.push('<?= $item['namabot'] ?>'); // Nama bot untuk daily usage
+        botUsagesDaily.push(<?= $item['dailyUsage'] ?>); // Daily usage per bot
+        <?php endforeach; ?>
 
         // Chart untuk Daily Usage
         var ctxDaily = document.getElementById('dailylUsageChart').getContext('2d');
